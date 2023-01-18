@@ -1,0 +1,101 @@
+import random
+
+class Ls:
+    def __init__(self, number_of_variables=1):
+        self.nvar = number_of_variables
+        self.rangevar = range(0,self.nvar)
+        self.ls_system = [[0 for x in range(0,self.nvar+1)] for y in range(0,self.nvar)]
+
+    def __str__(self) -> str:
+        return f'{self.ls_system}'
+
+
+    def make_random_system(self):
+        rand_system = []
+        rand_system += [[random.randint(0,9) for x in range(0,self.nvar+1)] for y in range(0,self.nvar)]
+        return rand_system
+
+    def make_solution(self):
+        solution = []
+        for x in range(0,self.nvar):
+            solution += [[1 if x == y else 0 for y in range(0,self.nvar+1)]]
+        for n in solution:
+            n[self.nvar] = random.randint(0,9)
+        return solution
+
+    def swap_rows(self, row_to_change, other_row):
+        self.ls_system[row_to_change-1], self.ls_system[other_row-1] = self.ls_system[other_row-1], self.ls_system[row_to_change-1]
+
+    def add_rows(self, row_to_change, adding_row, amount_of_adding):
+        for x in range(0,self.nvar+1):
+            self.ls_system[row_to_change-1][x] += self.ls_system[adding_row-1][x] * amount_of_adding
+
+    def remove_rows(self, row_to_change, removing_row, amount_of_removing):
+        for x in range(0,self.nvar+1):
+            self.ls_system[row_to_change-1][x] -= self.ls_system[removing_row-1][x] * amount_of_removing
+
+    def multiply_coefficient(self, row_to_change, factor):
+        for x in range(0, self.nvar+1):
+            self.ls_system[row_to_change-1][x] *= factor
+
+    def divide_coefficient(self, row_to_change, denominator):
+        for x in range(0, self.nvar+1):
+            self.ls_system[row_to_change-1][x] /= denominator
+            #self.ls_system[row_to_change-1][x] = round(self.ls_system[row_to_change-1][x])
+
+    def nvar_random(self):
+        return random.randint(1,self.nvar)
+    
+
+    def shuffle(self, shuffle_times=1):
+        for x in range(0,shuffle_times):
+            random.choice([self.swap_rows(self.nvar_random(),self.nvar_random()), self.add_rows(self.nvar_random(), self.nvar_random(), self.nvar_random()),
+            self.remove_rows(self.nvar_random(),self.nvar_random(),self.nvar_random()), 
+            self.multiply_coefficient(self.nvar_random(),self.nvar_random())]) #self.divide_coefficient(self.nvar_random(),self.nvar_random())
+
+class One_solution(Ls):
+    def __init__(self, number_of_variables):
+        super().__init__(number_of_variables)
+        self.ls_system = self.make_solution()
+    
+    def __str__(self):
+        return f'{self.ls_system}'
+
+
+
+test1 = Ls(3)
+test2 = test1.make_solution()
+test3 = One_solution(3)
+#test4 = test3.make_solution(3)
+
+def make_tasks(number_of_tasks = 1, number_of_variables = 1):
+    tasks = {}
+    for x in range(0,number_of_tasks):
+        task_system_object = One_solution(number_of_variables)
+        tasks[f'solution{x}'] = task_system_object
+        task_system_object.shuffle(5)
+        tasks[f'task: {x}'] = task_system_object
+    return tasks
+
+#print(test1.make_random_system())
+# print(test1.one_solution(6))
+#print(test1.make_solution(5))
+#print(make_tasks(5,2))
+
+
+
+print(test3)
+test3.swap_rows(1,3)
+print(test3)
+test3.swap_rows(1,3)
+test3.add_rows(1,3,3)
+print(test3)
+test3.remove_rows(1,3,3)
+print(test3)
+test3.multiply_coefficient(1,5)
+print(test3)
+test3.divide_coefficient(1,5)
+print(test3)
+test3.shuffle(10)
+print(test3)
+
